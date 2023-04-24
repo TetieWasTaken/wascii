@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
         cvtColor(frame, frame, COLOR_BGR2GRAY);
 
-        resize(frame, frame, Size(80, 40));
+        resize(frame, frame, Size(160, 120));
 
         string ascii = "";
         for(int i = 0; i < frame.rows; i++) {

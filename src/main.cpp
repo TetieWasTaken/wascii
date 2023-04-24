@@ -1,5 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <stdlib.h>
 
 using namespace std;
 using namespace cv;
@@ -35,6 +36,7 @@ int main(int argc, char** argv) {
             ascii += "\n";
         }
 
+        system("clear");
         cout << ascii << endl;
 
         char c = (char)waitKey(25);

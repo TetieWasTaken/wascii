@@ -42,7 +42,7 @@ int main(int argc, char **argv)
             ascii += "\n";
         }
 
-        system("clear");
+        printf("\033[2J\033[1;1H");
         cout << ascii << endl;
 
         char c = (char)waitKey(25);

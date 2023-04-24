@@ -7,7 +7,7 @@ using namespace cv;
 
 char intensityToChar(int intensity)
 {
-    const string CHARSET = " .'`\"^,;:Il!i><~^+?-_)(|\\/xrtnvzXYUJCLQ0OZmwqpdbkhao*%MW#@";
+    const string CHARSET = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
     int index = (int)(CHARSET.length() * (intensity) / 255);
     return CHARSET[index];
 }

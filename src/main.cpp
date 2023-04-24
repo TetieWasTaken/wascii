@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
         Mat frame;
         cap >> frame;
 
+        flip (frame, frame, 1);
+
         cvtColor(frame, frame, COLOR_BGR2GRAY);
 
         resize(frame, frame, Size(80, 40));

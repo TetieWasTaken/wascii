@@ -2,18 +2,34 @@
 #include <opencv2/opencv.hpp>
 #include <stdlib.h>
 #include <mach/mach.h>
+#include <chrono>
 
 using namespace std;
 using namespace cv;
 
+*/
+
+const string CHARSET = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
+
 char intensityToChar(int intensity)
 {
-    const string CHARSET = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
     int index = (int)(CHARSET.length() * (intensity) / 255);
     return CHARSET[index];
 }
 
-string getMemoryUsage()
+int getParam(string message, int defaultValue)
+{
+    string valueStr;
+    cout << message << " (" << defaultValue << "): ";
+    getline(cin, valueStr);
+    if (valueStr == "")
+    {
+        return defaultValue;
+    }
+    return stoi(valueStr);
+}
+
+string logInfo(std::chrono::steady_clock::time_point started_at)
 {
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t vmstat;
@@ -22,18 +38,17 @@ string getMemoryUsage()
         long long free_memory = (int64_t)vmstat.free_count * (int64_t)vm_page_size;
         long long used_memory = ((int64_t)vmstat.active_count + (int64_t)vmstat.inactive_count + (int64_t)vmstat.wire_count) * (int64_t)vm_page_size;
 
-        // Color the memory usage depending on the amount of free memory and used memory
-        string free_memory_color = "\033[0;32m";
-        string used_memory_color = "\033[0;31m";
+        string free_memory_color = "\033[1;32m";
+        string used_memory_color = "\033[1;31m";
         if (free_memory < 100000000)
         {
-            free_memory_color = "\033[0;31m";
+            free_memory_color = "\033[1;31m";
         }
         else if (free_memory < 200000000)
         {
-            free_memory_color = "\033[0;33m";
+            free_memory_color = "\033[1;33m";
         }
-        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB\nUsed memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB";
+        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB         Used memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB         \033[1;34m" + to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - started_at).count()) + "\033[0m seconds";
     }
     return "";
 }
@@ -47,6 +62,12 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    std::chrono::steady_clock::time_point started_at = std::chrono::steady_clock::now();
+
+    int timeBetweenFrames = getParam("Time between frames (ms)", 25);
+    int xSize = getParam("X size", 160);
+    int ySize = getParam("Y size", 120);
+
     while (1)
     {
         Mat frame;
@@ -56,7 +77,7 @@ int main(int argc, char **argv)
 
         cvtColor(frame, frame, COLOR_BGR2GRAY);
 
-        resize(frame, frame, Size(160, 120));
+        resize(frame, frame, Size(xSize, ySize));
 
         string ascii = "";
         for (int i = 0; i < frame.rows; i++)
@@ -70,11 +91,11 @@ int main(int argc, char **argv)
 
         printf("\033[2J\033[1;1H");
         cout << ascii << endl
-             << getMemoryUsage() << endl;
+             << logInfo(started_at) << endl;
 
-        char c = (char)waitKey(25);
+        char c = (char)waitKey(timeBetweenFrames);
         if (c == 27)
-            break;
+            return 0;
     }
 
     cap.release();

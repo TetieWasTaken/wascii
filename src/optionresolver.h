@@ -9,11 +9,11 @@ public:
         std::string valueStr;
         if constexpr (std::is_same_v<T, bool>)
         {
-            std::cout << message << " (" << (defaultValue ? "Y/n" : "y/N") << "): ";
+            std::cout << message << " (" << (defaultValue ? "\033[1;32mY\033[0m/\033[1;31mn\033[0m" : "\033[1;32my\033[0m/\033[1;31mN\033[0m") << "): ";
         }
         else
         {
-            std::cout << message << " (" << defaultValue << "): ";
+            std::cout << message << " (\033[1;37m" << defaultValue << "\033[0m): ";
         }
         std::getline(std::cin, valueStr);
         if (valueStr == "")

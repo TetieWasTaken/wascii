@@ -9,6 +9,7 @@ using namespace cv;
 
 */
 
+#define clock chrono::steady_clock
 const string CHARSET = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 
 char intensityToChar(int intensity)
@@ -29,7 +30,6 @@ int getParam(string message, int defaultValue)
     return stoi(valueStr);
 }
 
-string logInfo(std::chrono::steady_clock::time_point started_at)
 {
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t vmstat;
@@ -48,7 +48,7 @@ string logInfo(std::chrono::steady_clock::time_point started_at)
         {
             free_memory_color = "\033[1;33m";
         }
-        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB         Used memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB         \033[1;34m" + to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - started_at).count()) + "\033[0m seconds";
+        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB         Used memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB         \033[1;34m" + to_string(chrono::duration_cast<chrono::seconds>(clock::now() - started_at).count()) + "\033[0m seconds";
     }
     return "";
 }
@@ -62,7 +62,9 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    std::chrono::steady_clock::time_point started_at = std::chrono::steady_clock::now();
+int main(int argc, char **argv)
+{
+    clock::time_point started_at = clock::now();
 
     int timeBetweenFrames = getParam("Time between frames (ms)", 25);
     int xSize = getParam("X size", 160);

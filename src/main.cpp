@@ -27,6 +27,8 @@ char intensityToChar(int intensity)
 
 string logInfo(clock::time_point started_at, Mat frame)
 {
+    string matrix = "\033[1;34m" + type2str(frame.type()) + "\033[22;32;3m " + to_string(frame.cols) + "\033[39mx\033[32m" + to_string(frame.rows) + "\033[0m";
+
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t vmstat;
     if (host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vmstat, &count) == KERN_SUCCESS)
@@ -44,7 +46,7 @@ string logInfo(clock::time_point started_at, Mat frame)
         {
             free_memory_color = "\033[1;33m";
         }
-        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB         Used memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB         \033[1;34m" + to_string(chrono::duration_cast<chrono::seconds>(clock::now() - started_at).count()) + "\033[0m seconds";
+        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB         Used memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB         \033[1;34m" + to_string(chrono::duration_cast<chrono::seconds>(clock::now() - started_at).count()) + "\033[0m seconds         Matrix: " + matrix;
     }
     return "";
 }
@@ -123,7 +125,7 @@ int main(int argc, char **argv)
     {
         string path = resolver.getParam<string>("Path to image", "./assets/logo.jpg");
 
-        Mat frame = imread(path, IMREAD_GRAYSCALE);
+        Mat frame = imread(path);
 
         if (frame.empty())
         {
@@ -131,12 +133,14 @@ int main(int argc, char **argv)
             return -1;
         }
 
+        cvtColor(frame, frame, COLOR_BGR2GRAY);
+
         resize(frame, frame, Size(xSize, ySize));
 
         string ascii = frameToAscii(frame);
 
         printf("\033[2J\033[1;1H");
         cout << ascii << endl
-             << logInfo(started_at) << endl;
+             << logInfo(started_at, frame) << endl;
     }
 }

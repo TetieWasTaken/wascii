@@ -1,26 +1,21 @@
 #include "errorcodes.h"
 
-using namespace std;
-
-enum paramType
-{
-    INT,
-    STRING,
-    BOOL
-};
-
 class OptionResolver
 {
 public:
-    int getIntParam(string message, int defaultValue);
-    string getStringParam(string message, string defaultValue);
-    bool getBoolParam(string message, bool defaultValue);
     template <typename T>
-    T getParam(const string &message, T defaultValue, const string &validValues = "")
+    T getParam(const std::string &message, T defaultValue, const std::string &validValues = "")
     {
-        string valueStr;
-        cout << message << " (" << defaultValue << "): ";
-        getline(cin, valueStr);
+        std::string valueStr;
+        if constexpr (std::is_same_v<T, bool>)
+        {
+            std::cout << message << " (" << (defaultValue ? "Y/n" : "y/N") << "): ";
+        }
+        else
+        {
+            std::cout << message << " (" << defaultValue << "): ";
+        }
+        std::getline(std::cin, valueStr);
         if (valueStr == "")
         {
             return defaultValue;
@@ -28,7 +23,16 @@ public:
 
         if (!validValues.empty())
         {
-            if (validValues.find(valueStr) == string::npos)
+            bool valid = false;
+            for (const auto &validValue : validValues)
+            {
+                if (valueStr.size() == 1 && valueStr[0] == validValue)
+                {
+                    valid = true;
+                    break;
+                }
+            }
+            if (!valid)
             {
                 throw InvalidationError(InvalidArgument, "Invalid argument", valueStr);
             }
@@ -36,79 +40,33 @@ public:
 
         try
         {
-            return boost::lexical_cast<T>(valueStr);
+            if constexpr (std::is_same_v<T, bool>)
+            {
+                if (valueStr.size() == 1)
+                {
+                    if (valueStr[0] == 'y' || valueStr[0] == 'Y')
+                    {
+                        return true;
+                    }
+                    else if (valueStr[0] == 'n' || valueStr[0] == 'N')
+                    {
+                        return false;
+                    }
+                }
+                throw InvalidationError(InvalidArgument, "Invalid argument", valueStr);
+            }
+            else if constexpr (std::is_same_v<T, std::string>)
+            {
+                return valueStr;
+            }
+            else
+            {
+                return std::stoi(valueStr);
+            }
         }
-        catch (boost::bad_lexical_cast &e)
+        catch (std::invalid_argument &e)
         {
             throw InvalidationError(InvalidArgument, "Invalid argument", valueStr);
         }
     }
-
-private:
-    bool _validateParam(string value, paramType type);
 };
-
-bool OptionResolver::_validateParam(string value, paramType type)
-{
-    if (type == INT)
-    {
-        for (int i = 0; i < value.length(); i++)
-        {
-            if (!isdigit(value[i]))
-            {
-                throw InvalidationError(InvalidArgument, "Invalid argument", value);
-            }
-        }
-        return true;
-    }
-    else if (type == STRING)
-    {
-        return true;
-    }
-    else if (type == BOOL)
-    {
-        if ((value != "y") && (value != "Y") && (value != "n") && (value != "N"))
-            throw InvalidationError(InvalidArgument, "Invalid argument", value);
-        return true;
-    }
-    throw InvalidationError(InvalidArgument, "Invalid argument", value);
-}
-
-int OptionResolver::getIntParam(string message, int defaultValue)
-{
-    string valueStr;
-    cout << message << " (" << defaultValue << "): ";
-    getline(cin, valueStr);
-    if (valueStr == "")
-    {
-        return defaultValue;
-    }
-    _validateParam(valueStr, INT);
-    return stoi(valueStr);
-}
-
-string OptionResolver::getStringParam(string message, string defaultValue)
-{
-    string valueStr;
-    cout << message << " (" << defaultValue << "): ";
-    getline(cin, valueStr);
-    if (valueStr == "")
-    {
-        return defaultValue;
-    }
-    _validateParam(valueStr, STRING);
-    return valueStr;
-}
-
-bool OptionResolver::getBoolParam(string message, bool defaultValue)
-{
-    string valueStr;
-    cout << message << " (" << (defaultValue ? "Y/n" : "y/N") << "): ";
-    getline(cin, valueStr);
-    if (valueStr == "")
-    {
-        return defaultValue;
-    }
-    _validateParam(valueStr, BOOL);
-    return valueStr == "y" || valueStr == "Y";
-}

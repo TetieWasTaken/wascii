@@ -78,13 +78,13 @@ int main(int argc, char **argv)
 
     OptionResolver resolver;
 
-    bool useWebcam = resolver.getBoolParam("Use webcam", true);
-    int xSize = resolver.getIntParam("X size", width);
-    int ySize = resolver.getIntParam("Y size", height);
+    bool useWebcam = resolver.getParam<bool>("Use webcam", true);
+    int xSize = resolver.getParam<int>("X size", width);
+    int ySize = resolver.getParam<int>("Y size", height);
 
     if (useWebcam)
     {
-        int timeBetweenFrames = resolver.getIntParam("Time between frames (ms)", 25);
+        int timeBetweenFrames = resolver.getParam<int>("Time between frames (ms)", 25);
         VideoCapture cap(0);
         if (!cap.isOpened())
         {
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        string path = resolver.getStringParam("Path to image", "./assets/logo.jpg");
+        string path = resolver.getParam<string>("Path to image", "./assets/logo.jpg");
 
         Mat frame = imread(path, IMREAD_GRAYSCALE);
 

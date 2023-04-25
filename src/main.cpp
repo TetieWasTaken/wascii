@@ -7,6 +7,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include "optionresolver.h"
+#include "utils.h"
 
 using namespace std;
 using namespace cv;
@@ -24,7 +25,7 @@ char intensityToChar(int intensity)
     return CHARSET[index];
 }
 
-string logInfo(clock::time_point started_at)
+string logInfo(clock::time_point started_at, Mat frame)
 {
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t vmstat;
@@ -74,7 +75,7 @@ int main(int argc, char **argv)
     resize(frame, frame, Size(width, height));
 
     cout << frameToAscii(frame) << endl
-         << logInfo(started_at) << endl;
+         << logInfo(started_at, frame) << endl;
 
     OptionResolver resolver;
 
@@ -107,7 +108,7 @@ int main(int argc, char **argv)
 
             printf("\033[2J\033[1;1H");
             cout << ascii << endl
-                 << logInfo(started_at) << endl;
+                 << logInfo(started_at, frame) << endl;
 
             char c = (char)waitKey(timeBetweenFrames);
             if (c == 27)

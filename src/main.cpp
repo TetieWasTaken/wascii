@@ -8,7 +8,6 @@
 using namespace std;
 using namespace cv;
 
-*/
 
 #define clock chrono::steady_clock
 
@@ -116,57 +115,88 @@ string logInfo(clock::time_point started_at)
     return "";
 }
 
-int main(int argc, char **argv)
+string frameToAscii(Mat frame)
 {
-    VideoCapture cap(0);
-    if (!cap.isOpened())
+    string ascii = "";
+    for (int i = 0; i < frame.rows; i++)
     {
-        cout << "Error opening video stream or file" << endl;
-        return -1;
+        for (int j = 0; j < frame.cols; j++)
+        {
+            ascii += intensityToChar(frame.at<uchar>(i, j));
+        }
+        ascii += "\n";
     }
+    return ascii;
+}
 
 int main(int argc, char **argv)
 {
     clock::time_point started_at = clock::now();
 
+    Mat frame = imread("./assets/logo.jpg", IMREAD_GRAYSCALE);
+    resize(frame, frame, Size(160, 120));
 
-    while (1)
+    cout << frameToAscii(frame) << endl
+         << logInfo(started_at) << endl;
+
     bool useWebcam = getBoolParam("Webcam", true);
     int xSize = getIntParam("X size", 160);
     int ySize = getIntParam("Y size", 120);
+
     if (useWebcam)
     {
-        Mat frame;
-        cap >> frame;
+        int timeBetweenFrames = getIntParam("Time between frames (ms)", 25);
+        VideoCapture cap(0);
+        if (!cap.isOpened())
+        {
+            cout << "Error opening video stream or file" << endl;
+            return -1;
+        }
 
-        flip(frame, frame, 1);
+        while (1)
+        {
+            Mat frame;
+            cap >> frame;
 
-        cvtColor(frame, frame, COLOR_BGR2GRAY);
+            flip(frame, frame, 1);
+
+            cvtColor(frame, frame, COLOR_BGR2GRAY);
+
+            resize(frame, frame, Size(xSize, ySize));
+
+            string ascii = frameToAscii(frame);
+
+            printf("\033[2J\033[1;1H");
+            cout << ascii << endl
+                 << logInfo(started_at) << endl;
+
+            char c = (char)waitKey(timeBetweenFrames);
+            if (c == 27)
+                return 0;
+        }
+
+        cap.release();
+
+        return 0;
+    }
+    else
+    {
+        string path = getStringParam("Path to image", "./assets/logo.jpg");
+
+        Mat frame = imread(path, IMREAD_GRAYSCALE);
+
+        if (frame.empty())
+        {
+            cout << "Error opening image" << endl;
+            return -1;
+        }
 
         resize(frame, frame, Size(xSize, ySize));
 
-        string ascii = "";
-        for (int i = 0; i < frame.rows; i++)
-    else
-    {
-        {
-            for (int j = 0; j < frame.cols; j++)
-            {
-                ascii += intensityToChar(frame.at<uchar>(i, j));
-            }
-            ascii += "\n";
-        }
+        string ascii = frameToAscii(frame);
 
         printf("\033[2J\033[1;1H");
         cout << ascii << endl
              << logInfo(started_at) << endl;
-
-        char c = (char)waitKey(timeBetweenFrames);
-        if (c == 27)
-            return 0;
     }
-
-    cap.release();
-
-    return 0;
 }

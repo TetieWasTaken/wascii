@@ -4,12 +4,16 @@
 #include <mach/mach.h>
 #include <chrono>
 #include "errorcodes.h"
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 using namespace std;
 using namespace cv;
 
 
 #define clock chrono::steady_clock
+
+struct winsize w;
 
 enum paramType
 {
@@ -131,17 +135,21 @@ string frameToAscii(Mat frame)
 
 int main(int argc, char **argv)
 {
+    ioctl(0, TIOCGWINSZ, &w);
+    int width = w.ws_col;
+    int height = w.ws_row - 2; // reserve 2 lines for info
+
     clock::time_point started_at = clock::now();
 
     Mat frame = imread("./assets/logo.jpg", IMREAD_GRAYSCALE);
-    resize(frame, frame, Size(160, 120));
+    resize(frame, frame, Size(width, height));
 
     cout << frameToAscii(frame) << endl
          << logInfo(started_at) << endl;
 
     bool useWebcam = getBoolParam("Webcam", true);
-    int xSize = getIntParam("X size", 160);
-    int ySize = getIntParam("Y size", 120);
+    int xSize = getIntParam("X size", width);
+    int ySize = getIntParam("Y size", height);
 
     if (useWebcam)
     {

@@ -51,7 +51,7 @@ string type2str(int type)
 string logInfo(clock::time_point started_at, Mat frame)
 {
     string matrix = "\033[1;34m" + type2str(frame.type()) + "\033[22;32;3m " + to_string(frame.cols) + "\033[39mx\033[32m" + to_string(frame.rows) + "\033[0m";
-    string seconds = "\033[1;34m" + to_string(chrono::duration_cast<chrono::seconds>(clock::now() - started_at).count()) + "\033[0m";
+    string seconds = "\033[1;34m" + to_string(chrono::duration_cast<chrono::seconds>(clock::now() - started_at).count()) + "s\033[0m";
 
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t vmstat;
@@ -70,7 +70,7 @@ string logInfo(clock::time_point started_at, Mat frame)
         {
             free_memory_color = "\033[1;33m";
         }
-        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB         Used memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB         " + seconds + "s elapsed         Matrix: " + matrix;
+        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB         Used memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB         " + seconds + " elapsed         Matrix: " + matrix;
     }
 
     return "Matrix: " + matrix + "         " + seconds + "s elapsed\n\033[1;4;31mWarning\033[24m: Could not get free memory\033[0m";

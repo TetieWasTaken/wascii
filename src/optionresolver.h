@@ -156,6 +156,7 @@ public:
             }
         }
 
+        clear();
         endwin();
 
         return options[selectedIndex];

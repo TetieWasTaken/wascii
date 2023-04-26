@@ -8,9 +8,11 @@
 #include <unistd.h>
 #include "optionresolver.h"
 #include "utils.h"
+#include <filesystem>
 
 using namespace std;
 using namespace cv;
+namespace fs = std::filesystem;
 
 
 #define clock chrono::steady_clock
@@ -99,7 +101,24 @@ int main(int argc, char **argv)
     }
     else if (selectedOption == "Image")
     {
-        string path = resolver.getParam<string>("Path to image", "./assets/logo.jpg");
+        vector<string> files;
+        for (const auto &entry : fs::directory_iterator("./assets"))
+        {
+            files.push_back(entry.path());
+        }
+
+        string path = resolver.getDropdown("Select image", files);
+
+        if (path == "./assets/samples")
+        {
+            vector<string> files;
+            for (const auto &entry : fs::directory_iterator(path))
+            {
+                files.push_back(entry.path());
+            }
+
+            path = resolver.getDropdown("Select image", files);
+        }
 
         Mat frame = imread(path);
 

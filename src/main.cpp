@@ -19,7 +19,16 @@ namespace fs = std::filesystem;
 
 struct winsize w;
 
-const string CHARSET = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
+enum Charsets
+{
+    LONG,
+    SHORT
+};
+
+const string LONG_CHARSET = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
+const string SHORT_CHARSET = " .:-=+*#%@";
+
+string CHARSET = SHORT_CHARSET;
 
 char intensityToChar(int intensity)
 {
@@ -60,6 +69,11 @@ int main(int argc, char **argv)
     string selectedOption = resolver.getDropdown("Select configuration", vector<string>{"Webcam", "Image"});
 
     cout << "Configuration: " << selectedOption << endl;
+    string charset = resolver.getDropdown("Select charset", vector<string>{"Short", "Long"});
+    charset == "Long" ? CHARSET = LONG_CHARSET : CHARSET = SHORT_CHARSET;
+
+    cout << "Charset: " << charset << endl;
+
     int xSize = resolver.getParam<int>("X size", width);
     int ySize = resolver.getParam<int>("Y size", height);
 

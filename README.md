@@ -8,7 +8,7 @@ A simple `Webcam` to `ASCII` converter written in `C++`.
 
 - [x] Webcam support
 - [x] Image support
-- [ ] Video support
+- [x] Video support
 - [ ] GIF support
 - [ ] Exporting
 

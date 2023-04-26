@@ -25,32 +25,6 @@ char intensityToChar(int intensity)
     return CHARSET[index];
 }
 
-string logInfo(clock::time_point started_at, Mat frame)
-{
-    string matrix = "\033[1;34m" + type2str(frame.type()) + "\033[22;32;3m " + to_string(frame.cols) + "\033[39mx\033[32m" + to_string(frame.rows) + "\033[0m";
-
-    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
-    vm_statistics_data_t vmstat;
-    if (host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vmstat, &count) == KERN_SUCCESS)
-    {
-        long long free_memory = (int64_t)vmstat.free_count * (int64_t)vm_page_size;
-        long long used_memory = ((int64_t)vmstat.active_count + (int64_t)vmstat.inactive_count + (int64_t)vmstat.wire_count) * (int64_t)vm_page_size;
-
-        string free_memory_color = "\033[1;32m";
-        string used_memory_color = "\033[1;31m";
-        if (free_memory < 100000000)
-        {
-            free_memory_color = "\033[1;31m";
-        }
-        else if (free_memory < 200000000)
-        {
-            free_memory_color = "\033[1;33m";
-        }
-        return "Free memory: " + free_memory_color + to_string(free_memory / 1024 / 1024) + "\033[0m MB         Used memory: " + used_memory_color + to_string(used_memory / 1024 / 1024) + "\033[0m MB         \033[1;34m" + to_string(chrono::duration_cast<chrono::seconds>(clock::now() - started_at).count()) + "\033[0m seconds         Matrix: " + matrix;
-    }
-    return "";
-}
-
 string frameToAscii(Mat frame)
 {
     string ascii = "";

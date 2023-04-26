@@ -81,11 +81,13 @@ int main(int argc, char **argv)
 
     OptionResolver resolver;
 
-    bool useWebcam = resolver.getParam<bool>("Use webcam", true);
+    string selectedOption = resolver.getDropdown("Select configuration", vector<string>{"Webcam", "Image"});
+
+    cout << "Configuration: " << selectedOption << endl;
     int xSize = resolver.getParam<int>("X size", width);
     int ySize = resolver.getParam<int>("Y size", height);
 
-    if (useWebcam)
+    if (selectedOption == "Webcam")
     {
         int timeBetweenFrames = resolver.getParam<int>("Time between frames (ms)", 25);
         VideoCapture cap(0);
@@ -121,7 +123,7 @@ int main(int argc, char **argv)
 
         return 0;
     }
-    else
+    else if (selectedOption == "Image")
     {
         string path = resolver.getParam<string>("Path to image", "./assets/logo.jpg");
 

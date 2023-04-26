@@ -19,12 +19,6 @@ namespace fs = std::filesystem;
 
 struct winsize w;
 
-enum Charsets
-{
-    LONG,
-    SHORT
-};
-
 const string LONG_CHARSET = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 const string SHORT_CHARSET = " .:-=+*#%@";
 

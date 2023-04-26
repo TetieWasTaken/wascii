@@ -2,6 +2,21 @@
 
 A simple `Webcam` to `ASCII` converter written in `C++`.
 
+# Features
+
+#### ASCII
+
+- [x] Webcam to ASCII
+- [x] Image to ASCII
+- [ ] Video to ASCII
+- [ ] GIF to ASCII
+- [ ] Webcam to ASCII Video
+- [ ] Webcam to ASCII GIF
+
+#### Other
+
+- [ ] Command Line Interface
+
 ## Troubleshooting
 
 <details>

@@ -112,6 +112,8 @@ int main(int argc, char **argv)
         vector<string> files;
         for (const auto &entry : fs::directory_iterator("./assets"))
         {
+            if (entry.path() == "./assets/.DS_Store")
+                continue;
             files.push_back(entry.path());
         }
 

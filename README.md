@@ -6,12 +6,11 @@ A simple `Webcam` to `ASCII` converter written in `C++`.
 
 #### ASCII
 
-- [x] Webcam to ASCII
-- [x] Image to ASCII
-- [ ] Video to ASCII
-- [ ] GIF to ASCII
-- [ ] Webcam to ASCII Video
-- [ ] Webcam to ASCII GIF
+- [x] Webcam support
+- [x] Image support
+- [ ] Video support
+- [ ] GIF support
+- [ ] Exporting
 
 #### Other
 

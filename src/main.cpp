@@ -66,8 +66,22 @@ int main(int argc, char **argv)
     string selectedOption = resolver.getDropdown("Select configuration", vector<string>{"Webcam", "Image", "Video"});
 
     cout << "Configuration: " << selectedOption << endl;
-    string charset = resolver.getDropdown("Select charset", vector<string>{"Short", "Long"});
-    charset == "Long" ? CHARSET = LONG_CHARSET : CHARSET = SHORT_CHARSET;
+    string charset = resolver.getDropdown("Select charset", vector<string>{"Short", "Long", "Custom"});
+
+    if (charset == "Long")
+    {
+        CHARSET = LONG_CHARSET;
+    }
+    else if (charset == "Short")
+    {
+        CHARSET = SHORT_CHARSET;
+    }
+    else if (charset == "Custom")
+    {
+        string customCharset = resolver.getParam<string>("Custom charset", "");
+        string dir = resolver.getDropdown("Select direction", vector<string>{"Dark to light", "Light to dark"});
+        CHARSET = dir == "Dark to light" ? customCharset : string(customCharset.rbegin(), customCharset.rend());
+    }
 
     cout << "Charset: " << charset << endl;
 
@@ -207,7 +221,6 @@ int main(int argc, char **argv)
             cap >> frame;
 
             if (frame.empty())
-                break;
 
             cvtColor(frame, frame, COLOR_BGR2GRAY);
 
@@ -221,7 +234,6 @@ int main(int argc, char **argv)
 
             char c = (char)waitKey(timeBetweenFrames);
             if (c == 27)
-                break;
         }
 
         cap.release();

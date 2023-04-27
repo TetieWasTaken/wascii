@@ -9,11 +9,13 @@ A simple `Webcam` to `ASCII` converter written in `C++`.
 - [x] Webcam support
 - [x] Image support
 - [x] Video support
-- [ ] GIF support
+- [x] GIF support
 - [ ] Exporting
 
-#### Other
+#### Miscelaneous
 
+- [ ] Performance testing
+- [ ] Performance improvements
 - [ ] Command Line Interface
 
 ## Troubleshooting

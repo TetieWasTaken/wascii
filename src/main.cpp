@@ -221,6 +221,10 @@ int main(int argc, char **argv)
             cap >> frame;
 
             if (frame.empty())
+            {
+                cap.set(CAP_PROP_POS_FRAMES, 0);
+                continue;
+            }
 
             cvtColor(frame, frame, COLOR_BGR2GRAY);
 

@@ -238,6 +238,7 @@ int main(int argc, char **argv)
 
             char c = (char)waitKey(timeBetweenFrames);
             if (c == 27)
+                break;
         }
 
         cap.release();
